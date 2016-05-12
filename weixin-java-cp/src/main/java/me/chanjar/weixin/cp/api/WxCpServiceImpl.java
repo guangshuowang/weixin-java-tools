@@ -124,8 +124,14 @@ public class WxCpServiceImpl implements WxCpService {
             }
             CloseableHttpClient httpclient = getHttpclient();
             String resultContent = null;
-            try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
+            CloseableHttpResponse response = null;
+            try {
+              response = httpclient.execute(httpGet);
               resultContent = new BasicResponseHandler().handleResponse(response);
+            }finally{
+              if (response != null) {
+			    response.close();
+			  }
             }
             WxError error = WxError.fromJson(resultContent);
             if (error.getErrorCode() != 0) {

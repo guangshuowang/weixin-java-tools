@@ -1,5 +1,11 @@
 package me.chanjar.weixin.mp.util.http;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.util.UUID;
+
 import me.chanjar.weixin.common.bean.result.WxError;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.util.fs.FileUtils;
@@ -7,6 +13,7 @@ import me.chanjar.weixin.common.util.http.InputStreamResponseHandler;
 import me.chanjar.weixin.common.util.http.RequestExecutor;
 import me.chanjar.weixin.common.util.http.Utf8ResponseHandler;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
+
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.client.ClientProtocolException;
@@ -15,12 +22,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
-import java.util.UUID;
 
 /**
  * 获得QrCode图片 请求执行器
@@ -46,8 +47,9 @@ public class QrCodeRequestExecutor implements RequestExecutor<File, WxMpQrCodeTi
       RequestConfig config = RequestConfig.custom().setProxy(httpProxy).build();
       httpGet.setConfig(config);
     }
-
-    try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
+    CloseableHttpResponse response = null;
+    try {
+      response = httpclient.execute(httpGet);
       Header[] contentTypeHeader = response.getHeaders("Content-Type");
       if (contentTypeHeader != null && contentTypeHeader.length > 0) {
         // 出错
@@ -60,6 +62,10 @@ public class QrCodeRequestExecutor implements RequestExecutor<File, WxMpQrCodeTi
 
       File localFile = FileUtils.createTmpFile(inputStream, UUID.randomUUID().toString(), "jpg");
       return localFile;
+    }finally{
+      if (response != null) {
+	    response.close();
+	  }
     }
 
   }

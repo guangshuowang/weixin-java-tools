@@ -349,7 +349,7 @@ public class WxMpServiceImpl implements WxMpService {
 
   public WxMpMaterialNewsBatchGetResult materialNewsBatchGet(int offset, int count) throws WxErrorException {
     String url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material";
-    Map<String, Object> params = new HashMap<>();
+    Map<String, Object> params = new HashMap<String, Object>();
     params.put("type", WxConsts.MATERIAL_NEWS);
     params.put("offset", offset);
     params.put("count", count);
@@ -364,7 +364,7 @@ public class WxMpServiceImpl implements WxMpService {
 
   public WxMpMaterialFileBatchGetResult materialFileBatchGet(String type, int offset, int count) throws WxErrorException {
     String url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material";
-    Map<String, Object> params = new HashMap<>();
+    Map<String, Object> params = new HashMap<String, Object>();
     params.put("type", type);
     params.put("offset", offset);
     params.put("count", count);

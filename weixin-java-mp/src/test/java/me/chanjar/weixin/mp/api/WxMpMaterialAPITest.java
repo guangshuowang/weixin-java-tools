@@ -1,23 +1,35 @@
 package me.chanjar.weixin.mp.api;
 
-import com.google.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.util.fs.FileUtils;
 import me.chanjar.weixin.mp.bean.WxMpMaterial;
 import me.chanjar.weixin.mp.bean.WxMpMaterialArticleUpdate;
 import me.chanjar.weixin.mp.bean.WxMpMaterialNews;
-import me.chanjar.weixin.mp.bean.result.*;
+import me.chanjar.weixin.mp.bean.result.WxMpMaterialCountResult;
+import me.chanjar.weixin.mp.bean.result.WxMpMaterialFileBatchGetResult;
+import me.chanjar.weixin.mp.bean.result.WxMpMaterialNewsBatchGetResult;
+import me.chanjar.weixin.mp.bean.result.WxMpMaterialUploadResult;
+import me.chanjar.weixin.mp.bean.result.WxMpMaterialVideoInfoResult;
+
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import com.google.inject.Inject;
 
 /**
  * 测试多媒体文件上传下载
@@ -31,7 +43,7 @@ public class WxMpMaterialAPITest {
   @Inject
   protected WxMpServiceImpl wxService;
 
-  private Map<String, Map<String, Object>> media_ids = new LinkedHashMap<>();
+  private Map<String, Map<String, Object>> media_ids = new LinkedHashMap<String, Map<String,Object>>();
   // 缩略图的id，测试上传图文使用
   private String thumbMediaId = "";
   // 单图文消息media_id
@@ -64,7 +76,7 @@ public class WxMpMaterialAPITest {
       thumbMediaId = res.getMediaId();
     }
 
-    Map<String, Object> materialInfo = new HashMap<>();
+    Map<String, Object> materialInfo = new HashMap<String, Object>();
     materialInfo.put("media_id", res.getMediaId());
     materialInfo.put("length", tempFile.length());
     materialInfo.put("filename", tempFile.getName());
@@ -226,7 +238,7 @@ public class WxMpMaterialAPITest {
 
   @DataProvider
   public Iterator<Object[]> allTestMaterial() {
-    List<Object[]> params = new ArrayList<>();
+    List<Object[]> params = new ArrayList<Object[]>();
     for (String mediaId : this.media_ids.keySet()) {
       params.add(new Object[]{mediaId});
     }

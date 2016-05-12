@@ -1,9 +1,16 @@
 package me.chanjar.weixin.common.util.http;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import me.chanjar.weixin.common.bean.result.WxError;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.util.StringUtils;
 import me.chanjar.weixin.common.util.fs.FileUtils;
+
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.client.ClientProtocolException;
@@ -12,12 +19,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 下载媒体文件请求执行器，请求的参数是String, 返回的结果是File
@@ -52,9 +53,9 @@ public class MediaDownloadRequestExecutor implements RequestExecutor<File, Strin
       RequestConfig config = RequestConfig.custom().setProxy(httpProxy).build();
       httpGet.setConfig(config);
     }
-
-    try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
-
+    CloseableHttpResponse response = null;
+    try {
+      response = httpclient.execute(httpGet);
       Header[] contentTypeHeader = response.getHeaders("Content-Type");
       if (contentTypeHeader != null && contentTypeHeader.length > 0) {
         // 下载媒体文件出错
@@ -74,6 +75,10 @@ public class MediaDownloadRequestExecutor implements RequestExecutor<File, Strin
       File localFile = FileUtils.createTmpFile(inputStream, name_ext[0], name_ext[1], tmpDirFile);
       return localFile;
 
+    }finally{
+      if (response != null) {
+	    response.close();
+	  }
     }
 
   }
